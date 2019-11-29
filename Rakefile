@@ -7,7 +7,7 @@ task 'bookmark' do #処理
   doc = setup_doc('https://b.hatena.ne.jp/hotentry/it')
   x = '//a [@class="js-keyboard-openable"]'
   url_ary = []
-
+  
   doc.xpath(x).each_with_index do |node,i|
     break if i == 7
     puts "#{i+1}. #{node[:title]}\n\n"
@@ -20,9 +20,9 @@ task 'bookmark' do #処理
   while true do
     index = STDIN.gets.chomp
     case index
-    when /[1-7]/
+    when /\A[1-7]\z/
       system("open #{url_ary[index.to_i - 1]}")
-    when /q/i
+    when /\Aq\z/i
       break
     end
   end
