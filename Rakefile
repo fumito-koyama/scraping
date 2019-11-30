@@ -29,8 +29,19 @@ task 'bookmark' do #処理
   
 end
 
-def setup_doc(url)
-  charset = 'utf-8'
-  html = open(url) { |f| f.read }
-  Nokogiri::HTML.parse(html, nil, charset)
+class  RankingScraping
+
+  def setup_doc(url)
+    charset = nil
+    begin
+    html = open(url) do |f| 
+      charset = f.charset
+      f.read
+    end
+    rescue => e
+      puts e
+      return
+    end
+    Nokogiri::HTML.parse(html, nil, charset)
+  end
 end
