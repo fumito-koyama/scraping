@@ -1,47 +1,17 @@
 require 'nokogiri'
 require 'open-uri'
+require './ranking_scraping.rb'
 
-desc 'get ranking ,read ' #説明
+desc 'get ranking ,view ' #説明
 task 'bookmark' do #処理
 
-  doc = setup_doc('https://b.hatena.ne.jp/hotentry/it')
+  url = 'https://b.hatena.ne.jp/hotentry/it'
   x = '//a [@class="js-keyboard-openable"]'
-  url_ary = []
   
-  doc.xpath(x).each_with_index do |node,i|
-    break if i == 7
-    puts "#{i+1}. #{node[:title]}\n\n"
-    #puts node.to_s.match(/(?<=title=")([^"]+)/)
-    url_ary << node[:href]
-  end
+  rs = RankingScraping.new(url)
   
-  puts "\n読みたい記事を番号で指定してください。終了する際はq"
-  
-  while true do
-    index = STDIN.gets.chomp
-    case index
-    when /\A[1-7]\z/
-      system("open #{url_ary[index.to_i - 1]}")
-    when /\Aq\z/i
-      break
-    end
-  end
-  
-end
+  rs.get_element(x)
+  rs.view_title
 
-class  RankingScraping
-
-  def setup_doc(url)
-    charset = nil
-    begin
-    html = open(url) do |f| 
-      charset = f.charset
-      f.read
-    end
-    rescue => e
-      puts e
-      return
-    end
-    Nokogiri::HTML.parse(html, nil, charset)
-  end
+  rs.choice_article
 end
